@@ -44,6 +44,7 @@ void ReadyQueue::Add(Process&& process)
 	++m_size;
 }
 
+//Notify update loop (in Main.cpp) if ready queue has finished iterating.
 bool ReadyQueue::CompletedIteration()
 {
 	if (!iterationComplete)
@@ -61,6 +62,8 @@ bool ReadyQueue::IsEmpty() const
 	return m_size == 0;
 }
 
+
+//Update the current process in the ready queue
 bool ReadyQueue::Update()
 {
 	if (m_pFront == nullptr)
@@ -72,30 +75,27 @@ bool ReadyQueue::Update()
 	Process* pCurrentProcess = &m_pItrNode->m_process;
 	bool returnValue = false;
 
-	/*if (pCurrentProcess->GetID() == 1 && pCurrentProcess->IsBurstFinished())
-	{
-		std::cout << "DEBUGGIN' TIME!" << std::endl;
-	}*/
-
+	//Check if current process' CPU burst is complete
 	if (pCurrentProcess->IsBurstFinished() == false)
 	{
-		printf("P%d ", pCurrentProcess->GetID());
+		pCurrentProcess->DisplayProgress();
 
+		//If process is not first in ready queue, increment its wait time.
 		if (pCurrentProcess != nullptr && m_pItrNode != m_pFront)
 		{
 			pCurrentProcess->Wait();
 		}
-		else
+		else //If process is first in ready queue, burst.
 		{
 			pCurrentProcess->Burst();
 		}
 	}
-	else
+	else //If CPU burst is complete, notify update loop (in Main.cpp) that the current process will be transferred to I/O list.
 	{
 		returnValue = true;
 	}
 
-	//if (m_size > 1)
+	//Iterator will move to the next available process in the ready queue to update in the next iteration.
 	IncrementIteratorNode();
 
 	return returnValue;
@@ -116,6 +116,7 @@ void ReadyQueue::Print() const
 	std::cout << "\n";
 }
 
+//Increment iterator node to the next available process in ready queue. Reset iterator node if reached end of ready queue.
 void ReadyQueue::IncrementIteratorNode()
 {
 	if (m_pItrNode->Next == nullptr)
@@ -127,17 +128,19 @@ void ReadyQueue::IncrementIteratorNode()
 	m_pItrNode = m_pItrNode->Next;
 }
 
+//Move iterator back to the front of the ready queue.
 void ReadyQueue::ResetIteratorNode()
 {
 	if (m_pItrNode != m_pFront && m_pFront != nullptr)
 	{
 		m_pItrNode = m_pFront;
 	}
-	else if (m_pFront == nullptr)
+	else if (m_pFront == nullptr) //If ready queue is empty, iterator node should point to nothing.
 	{
 		m_pItrNode = nullptr;
 	}
 
+	//Iteration of ready queue is complete.
 	iterationComplete = true;
 }
 
@@ -148,18 +151,22 @@ Process& ReadyQueue::Remove()
 		std::cout << "ERROR: queue is empty!" << std::endl;
 	}
 
-	if (--m_size == 0)
-		iterationComplete = true;
-
+	//Before removing current process from ready queue, its burst index is incremented to run I/O burst
 	Process* pCurrentProcess = &(m_pFront->m_process);
-
 	pCurrentProcess->NextBurst();
+	Process& pOrgFront = *pCurrentProcess;
 
-	Process& pOrgFront = m_pFront->m_process;
+	//Front of ready queue is empty - the ready queue has removed the current process
 	m_pFront = m_pFront->Next;
+
+	//Decrement size of ready queue, and check if ready queue is now empty.
+	if (--m_size == 0)
+		ResetIteratorNode();
+
 	return (pOrgFront);
 }
 
+//This sorts the ready queue/singly-linked list for Shortest Job First (SJF) scheduling - this is not what the program does at the moment
 void ReadyQueue::Sort()
 {
 	Node* pHead = m_pFront;

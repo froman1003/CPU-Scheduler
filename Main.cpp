@@ -11,54 +11,60 @@ void FCFS(ReadyQueue& readyQueue)
 
 	do
 	{
-		printf("Ready Queue (Line %d): ", ++counter);
+		printf("RUNTIME: %d\n", counter);
+		printf("Ready Queue: ");
 
+		//Update all processes in ready queue
 		while (readyQueue.CompletedIteration() == false && readyQueue.IsEmpty() == false)
 		{
 			bool receivedProcess = readyQueue.Update();
 
+			//If current process has completed its CPU burst, retrieve it.
 			if (receivedProcess)
 			{
 				Process& returnedProcess = readyQueue.Remove();
 
+				//Transfer retrieved/returned process to I/O list if not finished.
 				if (returnedProcess.IsProcessFinished() == false)
 				{
-					printf("(P%d has left ready queue!) ", returnedProcess.GetID());
+					printf("(%s has left ready queue!) ", returnedProcess.GetName());
 					ioList.emplace_back(std::move(&returnedProcess));
 				}
 				else
 				{
-					printf("(P%d IS FINISHED!) ", returnedProcess.GetID());
+					printf("(%s IS FINISHED!) ", returnedProcess.GetName());
 				}
-				/*Process removedProcess = std::move(readyQueue.Remove());
-				ioList.push_back(std::move(removedProcess));*/
 			}
 		}
 
 		std::cout << "\n";
 
-		printf("I/O Queue (Line %d): ", counter);
+		printf("I/O Queue: ");
 
+		//Update all processes in I/O list.
 		for (ioIterator = ioList.begin(); ioIterator != ioList.end();)
 		{
 			Process& process = **ioIterator;
 
+			//Run current I/O burst and increment iterator to run next I/O burst.
 			if (process.IsBurstFinished() == false)
 			{
-				printf("P%d ", process.GetID());
+				process.DisplayProgress();
 				process.Burst();
 				++ioIterator;
 			}
-			else
+			else //Transfer current process to ready queue when its I/O burst is completed.
 			{
 				process.NextBurst();
-				printf("(P%d has left I/O queue!) ", process.GetID());
+				printf("(%s has left I/O queue!) ", process.GetName());
 				readyQueue.Add(std::move(process));
 				ioIterator = ioList.erase(ioIterator);
 			}
 		}
 
-		std::cout << "\n";
+		std::cout << "\n\n";
+
+		++counter;
 
 	} while (readyQueue.IsEmpty() == false || ioList.empty() == false);
 }
@@ -71,6 +77,7 @@ int main()
 	std::vector<int> bursts;
 	bursts.reserve(20);
 
+	//Creates all processes and inserts them into ready queue
 	bursts.assign({ 5, 27, 3, 31, 5, 43, 4, 18, 6, 22, 4, 26, 3, 24, 4 });
 	readyQueue.Add(std::move(Process(bursts)));
 
@@ -95,5 +102,16 @@ int main()
 	bursts.assign({ 4, 14, 5, 33, 6, 51, 14, 73, 16, 87, 6 });
 	readyQueue.Add(std::move(Process(bursts)));
 
+	//THIS IS TO TEST SORTING ALGORITHM FOR SJF SCHEDULING.
+	//readyQueue.Sort();
+
+	//Runs first-come-first-serve scheduling algorithm
 	FCFS(readyQueue);
+}
+
+
+
+void DisplayInfo(ReadyQueue& readyQueue, std::vector<Process*>& ioList)
+{
+	
 }

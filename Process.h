@@ -8,6 +8,7 @@ class Process
 private:
 	static unsigned int counter;
 	unsigned int m_id;
+	char* m_name;
 
 	unsigned int m_turnaroundTime;
 	unsigned int m_waitingTime;
@@ -32,14 +33,14 @@ public:
 	bool IsBurstFinished() const;
 	bool IsProcessFinished() const;
 
+	const char* GetName() const;
+
 	int GetBurst() const;
-	int GetID() const;
 	int GetTurnaroundTime() const;
 
 	void Burst();
+	void DisplayProgress() const;
 	void NextBurst();
 	void Wait();
-
-
 };
 
