@@ -162,6 +162,8 @@ void SJF(ReadyQueue& readyQueue)
 void DisplayResults(const std::vector<Process*>& finishedProcesses)
 {
 	std::cout << "Final Results:" << std::endl;
+	std::cout << "[Turnaround Time(Ttr), Waiting Time(Tw), Response Time(Tr)]" << std::endl;
+
 
 	for (Process* process : finishedProcesses)
 	{
