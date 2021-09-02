@@ -9,23 +9,24 @@ ReadyQueue::ReadyQueue()
 	iterationComplete = false;
 }
 
-ReadyQueue::ReadyQueue(const ReadyQueue& other)
-{
-	std::cout << "Deep Copy" << std::endl;
-
-	m_size = other.m_size;
-	iterationComplete = other.iterationComplete;
-
-	Node* pItrNode = other.m_pFront;
-
-	while (pItrNode)
-	{
-		Add(std::move(pItrNode->m_process));
-		pItrNode = pItrNode->Next;
-	}
-
-	m_pItrNode = new Node(std::move(other.m_pItrNode->m_process));
-}
+//ReadyQueue::ReadyQueue(const ReadyQueue& other)
+//	: m_pBack(nullptr), m_pFront(nullptr), m_pItrNode(nullptr)
+//{
+//	std::cout << "Deep Copy" << std::endl;
+//
+//	m_size = other.m_size;
+//	iterationComplete = other.iterationComplete;
+//
+//	Node* pItrNode = other.m_pFront;
+//
+//	while (pItrNode)
+//	{
+//		Add(pItrNode->m_process);
+//		pItrNode = pItrNode->Next;
+//	}
+//
+//	m_pItrNode = new Node(std::move(other.m_pItrNode->m_process));
+//}
 
 void ReadyQueue::Add(Process&& process)
 {
@@ -43,6 +44,23 @@ void ReadyQueue::Add(Process&& process)
 
 	++m_size;
 }
+
+//void ReadyQueue::Add(Process& process)
+//{
+//	if (m_pFront == nullptr)
+//	{
+//		m_pFront = new Node(process);
+//		m_pBack = m_pFront;
+//		m_pItrNode = m_pFront;
+//	}
+//	else
+//	{
+//		m_pBack->Next = new Node(process);
+//		m_pBack = m_pBack->Next;
+//	}
+//
+//	++m_size;
+//}
 
 //Notify update loop (in Main.cpp) if ready queue has finished iterating.
 bool ReadyQueue::CompletedIteration()
@@ -64,7 +82,7 @@ bool ReadyQueue::IsEmpty() const
 
 
 //Update the current process in the ready queue
-bool ReadyQueue::Update()
+bool ReadyQueue::Update(int runTime)
 {
 	if (m_pFront == nullptr)
 	{
@@ -87,7 +105,7 @@ bool ReadyQueue::Update()
 		}
 		else //If process is first in ready queue, burst.
 		{
-			pCurrentProcess->Burst();
+			pCurrentProcess->Burst(runTime);
 		}
 	}
 	else //If CPU burst is complete, notify update loop (in Main.cpp) that the current process will be transferred to I/O list.
@@ -169,6 +187,9 @@ Process& ReadyQueue::Remove()
 //This sorts the ready queue/singly-linked list for Shortest Job First (SJF) scheduling - this is not what the program does at the moment
 void ReadyQueue::Sort()
 {
+	if (m_size == 1)
+		return;
+
 	Node* pHead = m_pFront;
 
 	while (pHead->Next != nullptr)

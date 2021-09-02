@@ -14,6 +14,9 @@ private:
 
 		Node(Process&& process)
 			: m_process(std::move(process)), Next(nullptr) { }
+
+		Node(Process& process)
+			: m_process(process), Next(nullptr) { }
 	};
 
 private:
@@ -31,23 +34,16 @@ private:
 
 public:
 	ReadyQueue();
-	ReadyQueue(const ReadyQueue& other);
+	ReadyQueue(const ReadyQueue& other) = delete;
 
 	bool CompletedIteration();
 	bool IsEmpty() const;
-	bool Update();
+	bool Update(int runTime);
 	Process& Remove();
+	void Add(Process& process) = delete;
 	void Add(Process&& process);
 	void Print() const;
 
 	void Sort();
-
-	/*void Update()
-	{
-		for (int i = 0; i < queue.size(); ++i)
-		{
-			queue.front().Burst();
-		}
-	}*/
-
+	
 };
