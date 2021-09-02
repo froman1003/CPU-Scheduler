@@ -7,6 +7,7 @@ Process::Process(std::vector<int>& bursts)
 	: m_bursts(bursts), m_currentBurst(m_bursts.begin())
 {
 	m_id = ++counter;
+	m_bInitialBurst = true;
 	m_name = new char[3];
 	snprintf(m_name, 3, "P%d", m_id);
 
@@ -24,6 +25,7 @@ Process::Process(Process& other)
 	: m_bursts(other.m_bursts)
 {
 	m_id = other.m_id;
+	m_bInitialBurst = other.m_bInitialBurst;
 	m_name = new char[3];
 	snprintf(m_name, 3, "P%d", m_id);
 	m_bIsFinished = other.m_bIsFinished;
@@ -42,6 +44,7 @@ Process::Process(Process&& other)
 	: m_bursts(other.m_bursts)
 {
 	m_id = other.m_id;
+	m_bInitialBurst = other.m_bInitialBurst;
 	m_name = new char[3];
 	snprintf(m_name, 3, "P%d", m_id);
 	m_bIsFinished = other.m_bIsFinished;
@@ -65,6 +68,7 @@ Process& Process::operator=(Process&& other)
 	if (this != &other)
 	{
 		m_id = other.m_id;
+		m_bInitialBurst = other.m_bInitialBurst;
 		snprintf(m_name, 3, "P%d", m_id);
 		m_bursts = other.m_bursts;
 		m_currentBurst = m_bursts.begin();
@@ -127,12 +131,25 @@ void Process::NextBurst()
 	++m_burstIndex;
 }
 
-void Process::Burst()
+void Process::Burst(unsigned int runTime)
 {
+	if (m_bInitialBurst)
+	{
+		m_responseTime = runTime;
+		m_bInitialBurst = false;
+	}
+
 	--(*m_currentBurst);
 	++m_turnaroundTime;
 }
 
+//FORMAT: [Process name (ex. P1) - Turnaround Time = CPU Burst Time + Waiting Time + I/O Time,
+//Waiting Time = Time waiting to execute CPU Burst,
+//Respone Time = Time of first CPU Burst]
+void Process::DisplayFinalResults() const
+{
+	printf("%s - Ttr: %d, Tw: %d, Tr: %d\n", m_name, m_turnaroundTime, m_waitingTime, m_responseTime);
+}
 
 //FORMAT: [Process name (ex. P1): Process' current burst value (ex. 3)]
 void Process::DisplayProgress() const

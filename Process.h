@@ -8,6 +8,8 @@ class Process
 private:
 	static unsigned int counter;
 	unsigned int m_id;
+	bool m_bInitialBurst;
+	bool m_bIsFinished;
 	char* m_name;
 
 	unsigned int m_turnaroundTime;
@@ -17,8 +19,6 @@ private:
 
 	std::vector<int> m_bursts;
 	std::vector<int>::iterator m_currentBurst;
-
-	bool m_bIsFinished;
 
 	//METHODS
 public:
@@ -38,8 +38,9 @@ public:
 	int GetBurst() const;
 	int GetTurnaroundTime() const;
 
-	void Burst();
+	void Burst(unsigned int runTime);
 	void DisplayProgress() const;
+	void DisplayFinalResults() const;
 	void NextBurst();
 	void Wait();
 };
