@@ -83,16 +83,22 @@ void FCFS(ReadyQueue& readyQueue)
 void SJF(ReadyQueue& readyQueue)
 {
 	unsigned int runTime = 0;
+	bool sortReadyQueue = true;
 
 	using ProcessList = std::vector<Process*>;
-
 	ProcessList ioList;
 	ProcessList finishedProcesses;
 	ioList.reserve(8);
-	readyQueue.Sort();
+	
 
 	do
 	{
+		if (sortReadyQueue)
+		{
+			readyQueue.Sort();
+			sortReadyQueue = false;
+		}
+
 		printf("RUNTIME: %d\n", runTime);
 		printf("Ready Queue: ");
 
@@ -141,7 +147,7 @@ void SJF(ReadyQueue& readyQueue)
 					printf("(%s has left I/O queue!) ", process.GetName());
 					readyQueue.Add(std::move(process));
 					ioIterator = ioList.erase(ioIterator);
-					readyQueue.Sort();
+					sortReadyQueue = true; //Ensures ready queue is sorted the next time it is updated.
 				}
 				else
 				{
@@ -204,6 +210,6 @@ int main()
 		
 	//FOR NOW, RUN ONLY ONE ALGORITHM AT A TIME
 	// 
-	FCFS(readyQueue);
-	//SJF(readyQueue);
+	//FCFS(readyQueue);
+	SJF(readyQueue);
 }
