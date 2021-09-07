@@ -21,6 +21,12 @@
     <ClInclude Include="ReadyQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MultiQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RRQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Process.cpp">
@@ -30,6 +36,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ReadyQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RRQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

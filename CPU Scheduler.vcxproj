@@ -139,13 +139,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MultiQueue.h" />
     <ClInclude Include="Process.h" />
     <ClInclude Include="ReadyQueue.h" />
+    <ClInclude Include="RRQueue.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MultiQueue.cpp" />
     <ClCompile Include="Process.cpp" />
     <ClCompile Include="ReadyQueue.cpp" />
+    <ClCompile Include="RRQueue.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
