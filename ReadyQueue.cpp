@@ -181,7 +181,7 @@ Process& ReadyQueue::Remove()
 	if (--m_size == 0)
 		ResetIteratorNode();
 
-	return (pOrgFront);
+	return pOrgFront;
 }
 
 //This sorts the ready queue/singly-linked list for Shortest Job First (SJF) scheduling - this is not what the program does at the moment
