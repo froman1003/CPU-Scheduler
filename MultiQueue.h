@@ -5,7 +5,9 @@ class MultiQueue
 {
 private:
 	int m_index;
-	ReadyQueue m_queues[3];
+	int m_numOfQueues;
+	const int m_count;
+	ReadyQueue** m_ppQueues;
 
 public:
 	MultiQueue();
