@@ -12,6 +12,7 @@ Process::Process(std::vector<int>& bursts)
 	snprintf(m_name, 3, "P%d", m_id);
 
 	m_bIsFinished = false;
+	m_bDowngraded = false;
 
 	m_turnaroundTime = 0;
 	m_waitingTime = 0;
@@ -26,9 +27,13 @@ Process::Process(Process& other)
 {
 	m_id = other.m_id;
 	m_bInitialBurst = other.m_bInitialBurst;
+
 	m_name = new char[3];
 	snprintf(m_name, 3, "P%d", m_id);
+
 	m_bIsFinished = other.m_bIsFinished;
+	m_bDowngraded = other.m_bDowngraded;
+
 	m_currentBurst = m_bursts.begin();
 	std::advance(m_currentBurst, std::distance(other.m_bursts.begin(), other.m_currentBurst));
 
@@ -45,9 +50,13 @@ Process::Process(Process&& other)
 {
 	m_id = other.m_id;
 	m_bInitialBurst = other.m_bInitialBurst;
+
 	m_name = new char[3];
 	snprintf(m_name, 3, "P%d", m_id);
+
 	m_bIsFinished = other.m_bIsFinished;
+	m_bDowngraded = other.m_bDowngraded;
+
 	m_currentBurst = m_bursts.begin();
 	std::advance(m_currentBurst, std::distance(other.m_bursts.begin(), other.m_currentBurst));
 
@@ -95,6 +104,11 @@ Process::~Process()
 bool Process::IsBurstFinished() const
 {
 	return (*m_currentBurst) == 0;
+}
+
+bool Process::IsDowngraded() const
+{
+	return m_bDowngraded; 
 }
 
 //Has process completed all of its CPU and I/O bursts.
@@ -155,6 +169,11 @@ void Process::DisplayFinalResults() const
 void Process::DisplayProgress() const
 {
 	printf("[%s: %d] ", m_name, *m_currentBurst);
+}
+
+void Process::SetDowngraded(bool condition)
+{
+	m_bDowngraded = condition;
 }
 
 void Process::Wait()

@@ -10,6 +10,7 @@ private:
 	unsigned int m_id;
 	bool m_bInitialBurst;
 	bool m_bIsFinished;
+	bool m_bDowngraded;
 	char* m_name;
 
 	unsigned int m_turnaroundTime;
@@ -31,6 +32,7 @@ public:
 	Process& operator=(Process&& other);
 
 	bool IsBurstFinished() const;
+	bool IsDowngraded() const;
 	bool IsProcessFinished() const;
 
 	const char* GetName() const;
@@ -42,6 +44,7 @@ public:
 	void DisplayProgress() const;
 	void DisplayFinalResults() const;
 	void NextBurst();
+	void SetDowngraded(bool condition);
 	void Wait();
 };
 
