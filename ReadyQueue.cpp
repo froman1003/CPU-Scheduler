@@ -170,9 +170,16 @@ Process& ReadyQueue::Remove()
 	}
 
 	//Before removing current process from ready queue, its burst index is incremented to run I/O burst
-	Process* pCurrentProcess = &(m_pFront->m_process);
-	pCurrentProcess->NextBurst();
-	Process& pOrgFront = *pCurrentProcess;
+	Process* pOrgProcess = &(m_pFront->m_process);
+
+	if (pOrgProcess->IsBurstFinished() == true)
+	{
+		pOrgProcess->NextBurst();
+	}
+	else
+	{
+		pOrgProcess->SetDowngraded(true);
+	}
 
 	//Front of ready queue is empty - the ready queue has removed the current process
 	m_pFront = m_pFront->Next;
@@ -181,7 +188,7 @@ Process& ReadyQueue::Remove()
 	if (--m_size == 0)
 		ResetIteratorNode();
 
-	return pOrgFront;
+	return *pOrgProcess;
 }
 
 //This sorts the ready queue/singly-linked list for Shortest Job First (SJF) scheduling - this is not what the program does at the moment

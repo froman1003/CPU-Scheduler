@@ -6,7 +6,7 @@
 
 class ReadyQueue
 {
-private:
+protected:
 	struct Node
 	{
 		Process m_process;
@@ -19,7 +19,6 @@ private:
 			: m_process(process), Next(nullptr) { }
 	};
 
-private:
 	Node* m_pBack;
 	Node* m_pFront;
 	Node* m_pItrNode;
@@ -28,7 +27,7 @@ private:
 
 	bool iterationComplete;
 
-private:
+protected:
 	void IncrementIteratorNode();
 	void ResetIteratorNode();
 
@@ -38,7 +37,7 @@ public:
 
 	bool CompletedIteration();
 	bool IsEmpty() const;
-	bool Update(int runTime);
+	virtual bool Update(int runTime);
 	Process& Remove();
 	void Add(Process& process) = delete;
 	void Add(Process&& process);
