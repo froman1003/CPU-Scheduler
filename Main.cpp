@@ -189,15 +189,16 @@ void MLFQ(MultiQueue& mq)
 			if (receivedProcess)
 			{
 				Process& returnedProcess = mq.Remove();
-				
+				bool downgraded = returnedProcess.IsDowngraded();
+				bool finished = returnedProcess.IsProcessFinished();
 
 				//Transfer retrieved/returned process to I/O list if not finished.
-				if (returnedProcess.IsDowngraded() == false && returnedProcess.IsProcessFinished() == false)
+				if (!downgraded && !finished)
 				{
 					printf("(%s has left Queue %d!) ", returnedProcess.GetName(), queueNum);
 					ioList.emplace_back(std::move(&returnedProcess));
 				}
-				else if (returnedProcess.IsDowngraded() == true && returnedProcess.IsProcessFinished() == false)
+				else if (downgraded && !finished)
 				{
 					printf("(%s has moved to Queue %d!) ", returnedProcess.GetName(), queueNum + 1);
 					returnedProcess.SetDowngraded(false);
@@ -244,7 +245,7 @@ void MLFQ(MultiQueue& mq)
 
 		++runTime;
 
-	} while ((mq.IsEmpty() == false) || (mq.Index() == 2) || ioList.empty() == false);
+	} while (mq.IsEmpty() == false || ioList.empty() == false);
 
 	DisplayResults(finishedProcesses);
 }
