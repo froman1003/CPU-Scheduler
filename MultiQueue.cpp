@@ -2,7 +2,7 @@
 #include "RRQueue.h"
 
 MultiQueue::MultiQueue()
-	: m_index(0), m_numOfQueues(3), m_count(3)
+	: m_index(0), m_count(3)
 {
 	m_ppQueues = new ReadyQueue* [m_count];
 	m_ppQueues[0] = new RRQueue(5);
@@ -55,7 +55,6 @@ Process& MultiQueue::Remove()
 		{
 			processesLeft = 8;
 			++m_index;
-			--m_numOfQueues;
 
 			SetIterationComplete(m_ppQueues[m_index], true);
 		}
