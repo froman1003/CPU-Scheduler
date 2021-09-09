@@ -268,9 +268,11 @@ int main()
 	std::vector<int> bursts;
 	bursts.reserve(20);
 
-	//COMMENT OUT CODE INSIDE REGION IF NOT IN USE
+	//README!
+	//ONLY ONE ALGORITHM CAN RUN AT A TIME! COMMENT OUT OTHER TWO.
+	//COMMENT OUT CODE INSIDE THIS REGION IF YOU WISH TO RUN MLFQ ALGORITHM!
 #pragma region FCFS & SJF
-	//Creates all processes and inserts them into ready queue
+	////Creates all processes and inserts them into ready queue
 	//ReadyQueue readyQueue;
 
 	//bursts.assign({ 5, 27, 3, 31, 5, 43, 4, 18, 6, 22, 4, 26, 3, 24, 4 }); //225
@@ -300,9 +302,10 @@ int main()
 	////FOR NOW, RUN ONLY ONE ALGORITHM AT A TIME
 	//// 
 	////FCFS(readyQueue);
-	//SJF(readyQueue);
+	////SJF(readyQueue);
 #pragma endregion
 
+	//COMMENT OUT CODE INSIDE THIS REGION IF YOU WISH TO RUN EITHER FCFS OR SJF ALGORITHMS!
 #pragma region MLFQ
 	MultiQueue mq;
 
