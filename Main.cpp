@@ -2,7 +2,7 @@
 #include "MultiQueue.h"
 #include <vector>
 
-void DisplayResults(const std::vector<Process*>& finishedProcesses);
+void DisplayResults(const std::vector<Process*>& finishedProcesses, const char* algName);
 
 void FCFS(ReadyQueue& readyQueue)
 {
@@ -77,7 +77,7 @@ void FCFS(ReadyQueue& readyQueue)
 
 	} while (readyQueue.IsEmpty() == false || ioList.empty() == false);
 
-	DisplayResults(finishedProcesses);
+	DisplayResults(finishedProcesses, "FCFS");
 }
 
 void SJF(ReadyQueue& readyQueue)
@@ -162,7 +162,7 @@ void SJF(ReadyQueue& readyQueue)
 
 	} while (readyQueue.IsEmpty() == false || ioList.empty() == false);
 
-	DisplayResults(finishedProcesses);
+	DisplayResults(finishedProcesses, "SJF");
 }
 
 void MLFQ(MultiQueue& mq)
@@ -247,19 +247,20 @@ void MLFQ(MultiQueue& mq)
 
 	} while (mq.IsEmpty() == false || ioList.empty() == false);
 
-	DisplayResults(finishedProcesses);
+	DisplayResults(finishedProcesses, "MLFQ");
 }
 
-void DisplayResults(const std::vector<Process*>& finishedProcesses)
+void DisplayResults(const std::vector<Process*>& finishedProcesses, const char* algName)
 {
-	std::cout << "Final Results:" << std::endl;
-	std::cout << "[Turnaround Time(Ttr), Waiting Time(Tw), Response Time(Tr)]" << std::endl;
-
+	printf("%s Final Results:\n", algName);
 
 	for (Process* process : finishedProcesses)
 	{
 		process->DisplayFinalResults();
 	}
+
+	std::cout << "\n";
+	std::cout << "[Turnaround Time(Ttr), Waiting Time(Tw), Response Time(Tr)]" << std::endl;
 }
 
 int main()
