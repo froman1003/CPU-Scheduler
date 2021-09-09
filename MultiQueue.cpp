@@ -56,7 +56,7 @@ Process& MultiQueue::Remove()
 			processesLeft = 8;
 			++m_index;
 
-			SetIterationComplete(m_ppQueues[m_index], true);
+			SetIterationComplete(m_ppQueues[m_index], true); //Ensures I/O will run before running the next queue. 
 		}
 	}
 
