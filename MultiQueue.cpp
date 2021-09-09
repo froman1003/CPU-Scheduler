@@ -45,7 +45,7 @@ Process& MultiQueue::Remove()
 	Process& pOrgFront = m_ppQueues[m_index]->Remove();
 
 	//If CPU Burst was not completed within the time quantum, it does not belong in the current queue anymore.
-	if (m_numOfQueues > 1 && pOrgFront.IsDowngraded() == true)
+	if (pOrgFront.IsDowngraded() == true || pOrgFront.IsProcessFinished())
 	{
 		//pOrgFront.SetDowngraded(false);
 		--processesLeft;
@@ -56,8 +56,15 @@ Process& MultiQueue::Remove()
 			processesLeft = 8;
 			++m_index;
 			--m_numOfQueues;
+
+			SetIterationComplete(m_ppQueues[m_index], true);
 		}
 	}
 
 	return pOrgFront;
+}
+
+void SetIterationComplete(ReadyQueue* pQueue, bool condition)
+{
+	pQueue->m_bIterationComplete = true;
 }
