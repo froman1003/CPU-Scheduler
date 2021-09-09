@@ -25,11 +25,12 @@ protected:
 
 	int m_size;
 
-	bool iterationComplete;
+	bool m_bIterationComplete;
 
 protected:
 	void IncrementIteratorNode();
 	void ResetIteratorNode();
+	friend void SetIterationComplete(ReadyQueue* pQueue, bool condition);
 
 public:
 	ReadyQueue();
@@ -42,7 +43,6 @@ public:
 	void Add(Process& process) = delete;
 	void Add(Process&& process);
 	void Print() const;
-
 	void Sort();
 	
 };

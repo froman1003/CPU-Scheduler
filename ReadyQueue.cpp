@@ -6,7 +6,7 @@ ReadyQueue::ReadyQueue()
 	: m_pBack(nullptr), m_pFront(nullptr), m_pItrNode(nullptr)
 {
 	m_size = 0;
-	iterationComplete = false;
+	m_bIterationComplete = false;
 }
 
 //ReadyQueue::ReadyQueue(const ReadyQueue& other)
@@ -15,7 +15,7 @@ ReadyQueue::ReadyQueue()
 //	std::cout << "Deep Copy" << std::endl;
 //
 //	m_size = other.m_size;
-//	iterationComplete = other.iterationComplete;
+//	m_bIterationComplete = other.m_bIterationComplete;
 //
 //	Node* pItrNode = other.m_pFront;
 //
@@ -65,13 +65,13 @@ void ReadyQueue::Add(Process&& process)
 //Notify update loop (in Main.cpp) if ready queue has finished iterating.
 bool ReadyQueue::CompletedIteration()
 {
-	if (!iterationComplete)
+	if (!m_bIterationComplete)
 	{
-		return iterationComplete;
+		return m_bIterationComplete;
 	}
 
-	bool temp = iterationComplete;
-	iterationComplete = false;
+	bool temp = m_bIterationComplete;
+	m_bIterationComplete = false;
 	return temp;
 }
 
@@ -159,7 +159,7 @@ void ReadyQueue::ResetIteratorNode()
 	}
 
 	//Iteration of ready queue is complete.
-	iterationComplete = true;
+	m_bIterationComplete = true;
 }
 
 Process& ReadyQueue::Remove()
