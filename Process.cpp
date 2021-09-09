@@ -162,7 +162,10 @@ void Process::Burst(unsigned int runTime)
 //Respone Time = Time of first CPU Burst]
 void Process::DisplayFinalResults() const
 {
-	printf("%s - Ttr: %d, Tw: %d, Tr: %d\n", m_name, m_turnaroundTime, m_waitingTime, m_responseTime);
+	if (m_bIsFinished)
+		printf("%s - Ttr: %d, Tw: %d, Tr: %d\n", m_name, m_turnaroundTime, m_waitingTime, m_responseTime);
+	else
+		printf("ERROR: Process is not finished! Cannot display final results!");
 }
 
 //FORMAT: [Process name (ex. P1): Process' current burst value (ex. 3)]
