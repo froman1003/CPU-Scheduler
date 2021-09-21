@@ -245,3 +245,19 @@ void ReadyQueue::Sort()
 		pHead = pHead->Next;
 	}
 }
+
+void ReadyQueue::UpdateWaitTimes()
+{
+	if (m_pFront == nullptr)
+		return;
+
+	Node* pRunner = m_pFront;
+
+	while (pRunner != nullptr)
+	{
+		pRunner->m_process.Wait();
+		pRunner = pRunner->Next;
+	}
+
+	delete pRunner;
+}

@@ -48,5 +48,6 @@ public:
 	void Print() const;
 	void SetInterruption();
 	void Sort();
-	
+	void UpdateWaitTimes();
+
 };
