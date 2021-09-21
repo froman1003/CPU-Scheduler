@@ -6,6 +6,7 @@ ReadyQueue::ReadyQueue()
 	: m_pBack(nullptr), m_pFront(nullptr), m_pItrNode(nullptr)
 {
 	m_size = 0;
+	m_processesLeft = 0;
 	m_bIterationComplete = false;
 }
 
@@ -43,6 +44,7 @@ void ReadyQueue::Add(Process&& process)
 	}
 
 	++m_size;
+	//m_processesLeft = m_size;
 }
 
 //void ReadyQueue::Add(Process& process)
@@ -80,6 +82,10 @@ bool ReadyQueue::IsEmpty() const
 	return m_size == 0;
 }
 
+bool ReadyQueue::IsQueueFinished() const
+{
+	return m_processesLeft == 0;
+}
 
 //Update the current process in the ready queue
 bool ReadyQueue::Update(int runTime)
@@ -175,10 +181,16 @@ Process& ReadyQueue::Remove()
 	if (pOrgProcess->IsBurstFinished() == true)
 	{
 		pOrgProcess->NextBurst();
+
+		if (pOrgProcess->IsProcessFinished())
+		{
+			--m_processesLeft;
+		}
 	}
 	else
 	{
 		pOrgProcess->SetDowngraded(true);
+		--m_processesLeft;
 	}
 
 	//Front of ready queue is empty - the ready queue has removed the current process
@@ -188,7 +200,17 @@ Process& ReadyQueue::Remove()
 	if (--m_size == 0)
 		ResetIteratorNode();
 
+	/*if (m_processesLeft == 0 && m_size != 0)
+	{
+		m_processesLeft = m_size;
+	}*/
+
 	return *pOrgProcess;
+}
+
+void ReadyQueue::SetInterruption()
+{
+	m_bWasInterrupted = true;
 }
 
 //This sorts the ready queue/singly-linked list for Shortest Job First (SJF) scheduling - this is not what the program does at the moment

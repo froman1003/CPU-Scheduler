@@ -24,8 +24,10 @@ protected:
 	Node* m_pItrNode;
 
 	int m_size;
+	int m_processesLeft;
 
 	bool m_bIterationComplete;
+	bool m_bWasInterrupted;
 
 protected:
 	void IncrementIteratorNode();
@@ -38,11 +40,13 @@ public:
 
 	bool CompletedIteration();
 	bool IsEmpty() const;
+	bool IsQueueFinished() const;
 	virtual bool Update(int runTime);
 	Process& Remove();
 	void Add(Process& process) = delete;
 	void Add(Process&& process);
 	void Print() const;
+	void SetInterruption();
 	void Sort();
 	
 };
