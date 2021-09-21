@@ -22,7 +22,10 @@ public:
 
 	bool IsEmpty() const;
 
+	bool IsInOrder();
+
 	bool Update(int runTime);
+	void UpdateLowerPriorityQueues();
 
 	int Index() const;
 

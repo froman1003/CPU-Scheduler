@@ -10,46 +10,48 @@ MultiQueue::MultiQueue()
 	m_ppQueues[2] = new ReadyQueue();
 }
 
-bool MultiQueue::AdjustIndex() const
-{
-	for (unsigned int i = m_priorityIndex; i < m_count; ++i)
-	{
-		if (m_ppQueues[i]->IsEmpty() == false)
-		{
-			if (m_index != i)
-			{
-				m_ppQueues[m_index]->SetInterruption();
-				m_index = i;
-			}
-			
-			return true;
-		}
-	}
-
-	return false;
-}
-
 bool MultiQueue::CompletedIteration()
 {
+	/*bool isCompleted = m_ppQueues[m_index]->CompletedIteration();
+
+	if (isCompleted)
+	{
+		isCompleted = !AdjustIndex();
+	}
+
+	return isCompleted;*/
+
 	return m_ppQueues[m_index]->CompletedIteration();
 }
 
 bool MultiQueue::IsEmpty() const
 {
-	/*if (m_index != m_priorityIndex)
-	{
-		AdjustIndex();
-	}*/
+	bool isEmpty = m_ppQueues[m_index]->IsEmpty();
 
-	bool condition = m_ppQueues[m_index]->IsEmpty();
-
-	if (condition)
+	if (isEmpty)
 	{
-		condition = !AdjustIndex();
+		isEmpty = !AdjustIndex();
 	}
 
-	return condition;
-	//return m_ppQueues[m_index]->IsEmpty();
+	return isEmpty;
+}
+
+bool MultiQueue::AdjustIndex() const
+{
+	/*if (m_ppQueues[m_priorityIndex]->IsEmpty() == false)
+		return;*/
+
+	for (unsigned int i = m_index + 1; i < m_count; ++i)
+	{
+		if (m_ppQueues[i]->IsEmpty() == false)
+		{
+			m_ppQueues[m_index]->SetInterruption();
+			m_index = i;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool MultiQueue::Update(int runTime)
@@ -58,6 +60,24 @@ bool MultiQueue::Update(int runTime)
 	returnValue = m_ppQueues[m_index]->Update(runTime);
 
 	return returnValue;
+}
+
+void MultiQueue::UpdateLowerPriorityQueues()
+{
+	for (unsigned int i = m_priorityIndex + 1; i < m_count; ++i)
+	{
+		if (m_index == i)
+		{
+			continue;
+		}
+
+		ReadyQueue& queue = *m_ppQueues[i];
+
+		if (queue.IsEmpty() == false)
+		{
+			queue.UpdateWaitTimes();
+		}
+	}
 }
 
 int MultiQueue::Index() const
@@ -69,20 +89,18 @@ void MultiQueue::Add(Process&& process)
 {
 	m_ppQueues[m_priorityIndex]->Add(std::move(process));
 
-	m_index = m_index != m_priorityIndex ? m_priorityIndex : m_index;
-	/*if (m_index != m_priorityIndex)
+	if (m_index != m_priorityIndex)
 	{
-		AdjustIndex();
-	}*/
+		m_ppQueues[m_index]->SetInterruption();
+		m_index = m_priorityIndex;
+	}
 }
 
 void MultiQueue::AddToNextQueue(Process&& process)
 {
-	int index = m_index + 1;
-
-	if (index < m_count)
+	if (m_index + 1 < m_count)
 	{
-		m_ppQueues[index]->Add(std::move(process));
+		m_ppQueues[m_index + 1]->Add(std::move(process));
 	}
 }
 
