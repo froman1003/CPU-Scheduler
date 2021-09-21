@@ -7,6 +7,12 @@ bool RRQueue::Update(int runTime)
 {
 	static int timeLeft = m_timeQuantum; //determines whether or not CPU bursts are finished within the assigned time quantum.
 
+	if (m_bWasInterrupted)
+	{
+		timeLeft = m_timeQuantum;
+		m_bWasInterrupted = false;
+	}
+
 	if (m_pFront == nullptr)
 	{
 		std::cout << "WARNING: No processes are ready!" << std::endl;
@@ -19,7 +25,7 @@ bool RRQueue::Update(int runTime)
 	//Check if current process' CPU burst is complete
 	if (pCurrentProcess->IsBurstFinished() == false)
 	{
-		if (timeLeft != 0)
+		if (timeLeft != 0 || m_pItrNode != m_pFront)
 			pCurrentProcess->DisplayProgress();
 
 		//If process is not first in ready queue, increment its wait time.
