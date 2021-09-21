@@ -4,9 +4,13 @@
 class MultiQueue
 {
 private:
-	int m_index;
+	mutable unsigned int m_index;
+	unsigned int m_priorityIndex;
 	const int m_count;
 	ReadyQueue** m_ppQueues;
+
+private:
+	bool AdjustIndex() const;
 
 public:
 	MultiQueue();
@@ -24,5 +28,8 @@ public:
 
 	Process& Remove();
 
-	void Add(Process&& process, unsigned int index);
+	void Add(Process&& process);
+	void AddToNextQueue(Process&& process);
+
+	
 };
