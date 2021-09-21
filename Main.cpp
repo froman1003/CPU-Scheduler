@@ -215,6 +215,8 @@ void MLFQ(MultiQueue& mq)
 
 		std::cout << "\n";
 
+		mq.UpdateLowerPriorityQueues();
+
 		printf("I/O Queue: ");
 
 		//Update all processes in I/O list.
