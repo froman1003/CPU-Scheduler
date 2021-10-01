@@ -46,7 +46,8 @@ public:
 	void Add(Process& process) = delete;
 	void Add(Process&& process);
 	void Print() const;
-	void SetInterruption();
+	virtual void IncrementProcessesLeft();
+	virtual void ResetTimeLeft();
 	void Sort();
 	void UpdateWaitTimes();
 

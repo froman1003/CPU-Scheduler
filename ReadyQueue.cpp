@@ -10,27 +10,13 @@ ReadyQueue::ReadyQueue()
 	m_bIterationComplete = false;
 }
 
-//ReadyQueue::ReadyQueue(const ReadyQueue& other)
-//	: m_pBack(nullptr), m_pFront(nullptr), m_pItrNode(nullptr)
-//{
-//	std::cout << "Deep Copy" << std::endl;
-//
-//	m_size = other.m_size;
-//	m_bIterationComplete = other.m_bIterationComplete;
-//
-//	Node* pItrNode = other.m_pFront;
-//
-//	while (pItrNode)
-//	{
-//		Add(pItrNode->m_process);
-//		pItrNode = pItrNode->Next;
-//	}
-//
-//	m_pItrNode = new Node(std::move(other.m_pItrNode->m_process));
-//}
-
 void ReadyQueue::Add(Process&& process)
 {
+	//process.SetDowngraded(false);
+
+	if (process.HasNeverBursted())
+		IncrementProcessesLeft();
+
 	if (m_pFront == nullptr)
 	{
 		m_pFront = new Node(std::move(process));
@@ -46,23 +32,6 @@ void ReadyQueue::Add(Process&& process)
 	++m_size;
 	//m_processesLeft = m_size;
 }
-
-//void ReadyQueue::Add(Process& process)
-//{
-//	if (m_pFront == nullptr)
-//	{
-//		m_pFront = new Node(process);
-//		m_pBack = m_pFront;
-//		m_pItrNode = m_pFront;
-//	}
-//	else
-//	{
-//		m_pBack->Next = new Node(process);
-//		m_pBack = m_pBack->Next;
-//	}
-//
-//	++m_size;
-//}
 
 //Notify update loop (in Main.cpp) if ready queue has finished iterating.
 bool ReadyQueue::CompletedIteration()
@@ -93,6 +62,7 @@ bool ReadyQueue::Update(int runTime)
 	if (m_pFront == nullptr)
 	{
 		std::cout << "WARNING: No processes are ready!" << std::endl;
+		m_bIterationComplete = true;
 		return false;
 	}
 
@@ -152,6 +122,11 @@ void ReadyQueue::IncrementIteratorNode()
 	m_pItrNode = m_pItrNode->Next;
 }
 
+void ReadyQueue::IncrementProcessesLeft()
+{
+	++m_processesLeft;
+}
+
 //Move iterator back to the front of the ready queue.
 void ReadyQueue::ResetIteratorNode()
 {
@@ -184,7 +159,7 @@ Process& ReadyQueue::Remove()
 
 		if (pOrgProcess->IsProcessFinished())
 		{
-			--m_processesLeft;
+ 			--m_processesLeft;
 		}
 	}
 	else
@@ -199,19 +174,11 @@ Process& ReadyQueue::Remove()
 	//Decrement size of ready queue, and check if ready queue is now empty.
 	if (--m_size == 0)
 		ResetIteratorNode();
-
-	/*if (m_processesLeft == 0 && m_size != 0)
-	{
-		m_processesLeft = m_size;
-	}*/
-
+		
 	return *pOrgProcess;
 }
 
-void ReadyQueue::SetInterruption()
-{
-	m_bWasInterrupted = true;
-}
+void ReadyQueue::ResetTimeLeft() { }
 
 //This sorts the ready queue/singly-linked list for Shortest Job First (SJF) scheduling - this is not what the program does at the moment
 void ReadyQueue::Sort()
