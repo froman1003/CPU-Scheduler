@@ -165,6 +165,11 @@ void SJF(ReadyQueue& readyQueue)
 	DisplayResults(finishedProcesses, "SJF");
 }
 
+
+
+
+
+//P6 SEEMS TO HAVE GONE BACK
 void MLFQ(MultiQueue& mq)
 {
 	unsigned int runTime = 0;
@@ -181,7 +186,7 @@ void MLFQ(MultiQueue& mq)
 		printf("Queue %d: ", queueNum);
 
 		//Update all processes in ready queue
-		while (mq.CompletedIteration() == false && mq.IsEmpty() == false)
+		while (mq.CompletedIteration() == false && mq.IsFinished() == false)
 		{
 			bool receivedProcess = mq.Update(runTime);
 
@@ -202,7 +207,7 @@ void MLFQ(MultiQueue& mq)
 				{
 					printf("(%s has moved to Queue %d!) ", returnedProcess.GetName(), queueNum + 1);
 					returnedProcess.SetDowngraded(false);
-					//mq.Add(std::move(returnedProcess), queueNum);
+					//mq.Add(std::move(returnedProcess));
 					mq.AddToNextQueue(std::move(returnedProcess));
 				}
 				else
@@ -214,9 +219,6 @@ void MLFQ(MultiQueue& mq)
 		}
 
 		std::cout << "\n";
-
-		mq.UpdateLowerPriorityQueues();
-
 		printf("I/O Queue: ");
 
 		//Update all processes in I/O list.
