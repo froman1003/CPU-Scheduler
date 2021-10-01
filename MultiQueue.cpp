@@ -122,7 +122,7 @@ Process& MultiQueue::Remove()
 
 		if (m_index < m_priorityIndex)
 		{
-			++m_index;
+			m_index = m_priorityIndex;
 			SetIterationComplete(m_ppQueues[m_index]);
 		}
 	}
