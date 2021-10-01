@@ -7,6 +7,7 @@ Process::Process(std::vector<int>& bursts)
 	: m_bursts(bursts), m_currentBurst(m_bursts.begin())
 {
 	m_id = ++counter;
+	m_queueID = 0;
 	m_bInitialBurst = true;
 	m_name = new char[3];
 	snprintf(m_name, 3, "P%d", m_id);
@@ -26,6 +27,7 @@ Process::Process(Process& other)
 	: m_bursts(other.m_bursts)
 {
 	m_id = other.m_id;
+	m_queueID = other.m_queueID;
 	m_bInitialBurst = other.m_bInitialBurst;
 
 	m_name = new char[3];
@@ -49,6 +51,7 @@ Process::Process(Process&& other)
 	: m_bursts(other.m_bursts)
 {
 	m_id = other.m_id;
+	m_queueID = other.m_queueID;
 	m_bInitialBurst = other.m_bInitialBurst;
 
 	m_name = new char[3];
@@ -77,6 +80,7 @@ Process& Process::operator=(Process&& other)
 	if (this != &other)
 	{
 		m_id = other.m_id;
+		m_queueID = other.m_queueID;
 		m_bInitialBurst = other.m_bInitialBurst;
 		snprintf(m_name, 3, "P%d", m_id);
 		m_bursts = other.m_bursts;
@@ -101,6 +105,11 @@ Process::~Process()
 	delete m_name;
 }
 
+bool Process::HasNeverBursted() const
+{
+	return m_bInitialBurst;
+}
+
 bool Process::IsBurstFinished() const
 {
 	return (*m_currentBurst) == 0;
@@ -120,6 +129,11 @@ bool Process::IsProcessFinished() const
 const char* Process::GetName() const
 {
 	return m_name;
+}
+
+unsigned int Process::GetQueueID()
+{
+	return m_queueID;
 }
 
 int Process::GetBurst() const
@@ -177,6 +191,8 @@ void Process::DisplayProgress() const
 void Process::SetDowngraded(bool condition)
 {
 	m_bDowngraded = condition;
+
+	m_queueID = m_bDowngraded == true ? m_queueID + 1 : m_queueID;
 }
 
 void Process::Wait()

@@ -8,6 +8,7 @@ class Process
 private:
 	static unsigned int counter;
 	unsigned int m_id;
+	unsigned int m_queueID;
 	bool m_bInitialBurst;
 	bool m_bIsFinished;
 	bool m_bDowngraded;
@@ -31,12 +32,14 @@ public:
 
 	Process& operator=(Process&& other);
 
+	bool HasNeverBursted() const;
 	bool IsBurstFinished() const;
 	bool IsDowngraded() const;
 	bool IsProcessFinished() const;
 
 	const char* GetName() const;
 
+	unsigned int GetQueueID();
 	int GetBurst() const;
 	int GetTurnaroundTime() const;
 
