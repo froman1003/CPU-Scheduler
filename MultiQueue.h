@@ -15,6 +15,7 @@ private:
 private:
 	bool AdjustIndex() const;
 	void UpdateLowerPriorityQueues();
+	void UpdateProcessCounts(unsigned int index);
 
 public:
 	MultiQueue();
@@ -36,7 +37,4 @@ public:
 	Process& Remove();
 
 	void Add(Process&& process);
-	void AddToNextQueue(Process&& process);
-
-	
 };
