@@ -6,7 +6,7 @@ ReadyQueue::ReadyQueue()
 	: m_pBack(nullptr), m_pFront(nullptr), m_pItrNode(nullptr)
 {
 	m_size = 0;
-	m_processesLeft = 0;
+	m_processesLeft = 8;
 	m_bIterationComplete = false;
 }
 
@@ -14,8 +14,8 @@ void ReadyQueue::Add(Process&& process)
 {
 	//process.SetDowngraded(false);
 
-	if (process.HasNeverBursted())
-		IncrementProcessesLeft();
+	/*if (process.HasNeverBursted())
+		IncrementProcessesLeft();*/
 
 	if (m_pFront == nullptr)
 	{
@@ -120,11 +120,6 @@ void ReadyQueue::IncrementIteratorNode()
 	}
 
 	m_pItrNode = m_pItrNode->Next;
-}
-
-void ReadyQueue::IncrementProcessesLeft()
-{
-	++m_processesLeft;
 }
 
 //Move iterator back to the front of the ready queue.

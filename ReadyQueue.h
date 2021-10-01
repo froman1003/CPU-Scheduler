@@ -32,7 +32,8 @@ protected:
 protected:
 	void IncrementIteratorNode();
 	void ResetIteratorNode();
-	friend void SetIterationComplete(ReadyQueue* pQueue, bool condition);
+	friend void SetIterationComplete(ReadyQueue* pQueue);
+	friend void ReduceProcessCount(ReadyQueue* pQueue);
 
 public:
 	ReadyQueue();
@@ -46,7 +47,6 @@ public:
 	void Add(Process& process) = delete;
 	void Add(Process&& process);
 	void Print() const;
-	virtual void IncrementProcessesLeft();
 	virtual void ResetTimeLeft();
 	void Sort();
 	void UpdateWaitTimes();
