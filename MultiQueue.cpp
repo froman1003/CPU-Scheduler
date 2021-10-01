@@ -12,20 +12,21 @@ MultiQueue::MultiQueue()
 
 bool MultiQueue::CompletedIteration()
 {
-	/*bool isCompleted = m_ppQueues[m_index]->CompletedIteration();
-
+	bool isCompleted = m_ppQueues[m_index]->CompletedIteration();
+	
 	if (isCompleted)
 	{
-		isCompleted = !AdjustIndex();
+		UpdateLowerPriorityQueues();
 	}
 
-	return isCompleted;*/
-
-	return m_ppQueues[m_index]->CompletedIteration();
+	return isCompleted;
 }
 
 bool MultiQueue::IsEmpty() const
 {
+	if (m_bAllQueuesAreEmpty)
+		return true;
+
 	bool isEmpty = m_ppQueues[m_index]->IsEmpty();
 
 	if (isEmpty)
@@ -36,41 +37,45 @@ bool MultiQueue::IsEmpty() const
 	return isEmpty;
 }
 
+bool MultiQueue::IsFinished() const
+{
+	if (m_bAllQueuesAreEmpty)
+		return true;
+
+	if (m_priorityIndex < m_count - 1)
+		return false;
+
+	bool condition = m_ppQueues[m_count - 1]->IsQueueFinished();
+	m_bAllQueuesAreEmpty = condition;
+
+	return condition;
+}
+
 bool MultiQueue::AdjustIndex() const
 {
-	/*if (m_ppQueues[m_priorityIndex]->IsEmpty() == false)
-		return;*/
-
-	for (unsigned int i = m_index + 1; i < m_count; ++i)
+	for (unsigned int i = m_priorityIndex; i < m_count; ++i)
 	{
 		if (m_ppQueues[i]->IsEmpty() == false)
 		{
-			m_ppQueues[m_index]->SetInterruption();
+			//m_ppQueues[m_index]->SetInterruption();
 			m_index = i;
 			return true;
 		}
 	}
 
+	m_bAllQueuesAreEmpty = true;
 	return false;
 }
 
 bool MultiQueue::Update(int runTime)
 {
-	bool returnValue = false;
-	returnValue = m_ppQueues[m_index]->Update(runTime);
-
-	return returnValue;
+	return m_ppQueues[m_index]->Update(runTime);
 }
 
 void MultiQueue::UpdateLowerPriorityQueues()
 {
-	for (unsigned int i = m_priorityIndex + 1; i < m_count; ++i)
+	for (unsigned int i = m_index + 1; i < m_count; ++i)
 	{
-		if (m_index == i)
-		{
-			continue;
-		}
-
 		ReadyQueue& queue = *m_ppQueues[i];
 
 		if (queue.IsEmpty() == false)
@@ -87,21 +92,36 @@ int MultiQueue::Index() const
 
 void MultiQueue::Add(Process&& process)
 {
-	m_ppQueues[m_priorityIndex]->Add(std::move(process));
+	unsigned int index = process.GetQueueID();
+	m_ppQueues[index]->Add(std::move(process));
 
-	if (m_index != m_priorityIndex)
+	if (index < m_index)
 	{
-		m_ppQueues[m_index]->SetInterruption();
-		m_index = m_priorityIndex;
+		//m_ppQueues[m_index]->ResetTimeLeft();
+		m_index = index;
 	}
+
+	if (index < m_priorityIndex)
+	{
+		m_priorityIndex = m_index;
+	}
+
+	m_bAllQueuesAreEmpty = false;
 }
 
 void MultiQueue::AddToNextQueue(Process&& process)
 {
-	if (m_index + 1 < m_count)
+	unsigned int index = process.GetQueueID();
+
+	m_ppQueues[index]->Add(std::move(process));
+
+	/*if (index < m_priorityIndex)
 	{
-		m_ppQueues[m_index + 1]->Add(std::move(process));
-	}
+		m_priorityIndex = m_index;
+	}*/
+	m_ppQueues[index]->IncrementProcessesLeft();
+
+	m_bAllQueuesAreEmpty = false;
 }
 
 Process& MultiQueue::Remove()
@@ -110,23 +130,25 @@ Process& MultiQueue::Remove()
 
 	Process& pOrgFront = m_ppQueues[m_index]->Remove();
 
-	//If CPU Burst was not completed within the time quantum, it does not belong in the current queue anymore.
-	if (pOrgFront.IsDowngraded() == true || pOrgFront.IsProcessFinished())
+	//If no more processes will become available in the current queue, move to the next queue.
+	if (m_ppQueues[m_index]->IsQueueFinished() == true && m_priorityIndex < m_count - 1)// && IsFinished() == false)
 	{
-		//pOrgFront.SetDowngraded(false);
-		//--processesLeft;
-		//++m_queuesAvailable;
-
-		//If no more processes will become available in the current queue, move to the next queue.
-		if (m_ppQueues[m_index]->IsQueueFinished() == true)
-		{
-			//processesLeft = 8;
-			++m_index;
-			++m_priorityIndex;
-			SetIterationComplete(m_ppQueues[m_index], true); //Ensures I/O will run before running the next queue. 
-		}
+		//++m_index;
+		++m_priorityIndex;
+		//m_index = m_priorityIndex;
+		//SetIterationComplete(m_ppQueues[m_index], true); //Ensures I/O will run before running the next queue. 
 	}
 
+	//if ((pOrgFront.IsDowngraded() == true || pOrgFront.IsProcessFinished() == true) && m_ppQueues[m_index]->IsQueueFinished() == true)
+	//{
+	//	++m_priorityIndex;
+	//	m_index = m_priorityIndex;
+	//	SetIterationComplete(m_ppQueues[m_index], true); //Ensures I/O will run before running the next queue. 
+	//}
+
+	//if (pOrgFront.IsDowngraded() == true)
+	//	pOrgFront.SetDowngraded(false);
+		
 	return pOrgFront;
 }
 

@@ -4,13 +4,17 @@
 class MultiQueue
 {
 private:
+	const int m_count;
 	mutable unsigned int m_index;
 	unsigned int m_priorityIndex;
-	const int m_count;
+
 	ReadyQueue** m_ppQueues;
+
+	mutable bool m_bAllQueuesAreEmpty;
 
 private:
 	bool AdjustIndex() const;
+	void UpdateLowerPriorityQueues();
 
 public:
 	MultiQueue();
@@ -23,9 +27,9 @@ public:
 	bool IsEmpty() const;
 
 	bool IsInOrder();
+	bool IsFinished() const;
 
 	bool Update(int runTime);
-	void UpdateLowerPriorityQueues();
 
 	int Index() const;
 
