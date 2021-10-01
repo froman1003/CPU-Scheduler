@@ -207,8 +207,8 @@ void MLFQ(MultiQueue& mq)
 				{
 					printf("(%s has moved to Queue %d!) ", returnedProcess.GetName(), queueNum + 1);
 					returnedProcess.SetDowngraded(false);
-					//mq.Add(std::move(returnedProcess));
-					mq.AddToNextQueue(std::move(returnedProcess));
+					mq.Add(std::move(returnedProcess));
+					//mq.AddToNextQueue(std::move(returnedProcess));
 				}
 				else
 				{
